@@ -1,0 +1,27 @@
+# sonoff-python
+Make use of your sonoff smart switches without flashing them via the cloud APIs, this should work in Python 2 or Python 3.
+
+This project is heavily inspired (read: almost entirely borrowed) by the work that Peter Buga did on a Simple Home Assistant integration for Ewelink https://github.com/peterbuga/HASS-sonoff-ewelink
+
+## Configuration
+
+Configuration is simple and basically passed to the class when you instantiate it. Username is either the email address you use to log in to Ewelink, or your phone number with the country code in front.
+
+> **username** - The email address or phone number you signed up with on Ewelink. Preface phone number with the country code
+> **password** - Your password to Ewelink.
+> **api_region** - The API region you use, valid ones are apparently 'us', 'eu' and 'cn'
+> **grace_period** - This defaults to 600, I don't know why yet.
+
+
+## Usage
+Here's a really simple example of how you can use this library. 
+
+import sonoff
+import config
+
+s = sonoff.Sonoff(config.username, config.password, config.api_region)
+devices = s.get_devices()
+if devices:
+    # We found a device, lets turn something on
+    device_id = devices[0]['deviceid']
+    s.switch('on', device_id, 0)

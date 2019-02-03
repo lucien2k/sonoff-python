@@ -9,6 +9,14 @@ I tried this approach but it didn't work for me as I was using a 4 channel switc
 
 I finally came across Peter's work written in python and it was exactly what I was looking for, a class that I could instantiate and control my switch remotely without flashing or having to use Charles to sniff my authentication code etc.
 
+## Installation
+
+Use pip or easy_install
+
+> pip install sonoff-python
+
+The requirements are requests and websocket-client, see _requirements.txt_
+
 ## Configuration
 
 Configuration is simple and basically passed to the class when you instantiate it. Username is either the email address you use to log in to Ewelink, or your phone number with the country code in front.
