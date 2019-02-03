@@ -24,7 +24,8 @@ Configuration is simple and basically passed to the class when you instantiate i
 ## Usage
 Here's a really simple example of how you can use this library. 
 
-```import sonoff
+```
+import sonoff
 import config
 
 s = sonoff.Sonoff(config.username, config.password, config.api_region)
