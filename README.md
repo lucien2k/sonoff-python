@@ -1,5 +1,5 @@
 # sonoff-python
-Make use of your sonoff smart switches without flashing them via the cloud APIs
+Make use of your sonoff smart switches without flashing them via the cloud APIs, this should work in Python 2 or Python 3.
 
 This project is heavily inspired (read: almost entirely borrowed) by the work that Peter Buga did on a Simple Home Assistant integration for Ewelink https://github.com/peterbuga/HASS-sonoff-ewelink
 
@@ -36,5 +36,7 @@ if devices:
 ```
 
 ## Support
+
+I have tested in Python 2 and Python 3, however as we all know there may be some library weirdness.
 
 I mainly put this together for my own use, I have learned a little about how the Sonoff kit works but for support it might be better to look at the library Peter Buga put together. I'm happy to look at any issues though.
