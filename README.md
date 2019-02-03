@@ -53,6 +53,9 @@ I mainly put this together for my own use, I have learned a little about how the
 ## Troubleshooting
 
 ### Ewelink registration for 4 channel switches
-The Sonoff switches have one of the most non-intuitive installation processes I have encountered. For registering my 4 channel switch I had to hold one of the buttons until it flashed quick, quick slow, then hold a second time until it rapidly flashed in a constant pattern. I did not see the ITEAD-xx access point until it rapidly flashed.
-
-Once it is rapidly flashing and your device is connected to the ITEAD-xx network, choose the Compatible Pairing Mode (AP) option, then press Next. This looks like a help page, but it is actually a fourth option (and the one you want!!)
+The Sonoff switches have one of the most non-intuitive installation processes I have encountered. For registering my 4 channel switch I had to:
+* Hold one of the buttons until it flashed quick, quick slow
+* Hold a second time until it rapidly flashed in a constant pattern. I did not see the ITEAD-xx access point until it rapidly flashed.
+* Once it is rapidly flashing, connect to the ITEAD-xx network
+* Choose the Compatible Pairing Mode (AP) option, then press Next. (This looks like a help page, but it is actually a fourth option (and the one you want!!))
+* Follow the onscreen instructions
