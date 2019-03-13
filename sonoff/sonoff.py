@@ -12,7 +12,7 @@ def gen_nonce(length=8):
 
 class Sonoff():
     # def __init__(self, hass, email, password, api_region, grace_period):
-    def __init__(self, username, password, api_region, grace_period=600):
+    def __init__(self, username, password, api_region, user_apikey=None, bearer_token=None, grace_period=600):
 
         self._username      = username
         self._password      = password
@@ -22,11 +22,30 @@ class Sonoff():
         self._skipped_login = 0
         self._grace_period  = timedelta(seconds=grace_period)
 
-        self._user_apikey   = None
+        self._user_apikey   = user_apikey
+        self._bearer_token  = bearer_token
         self._devices       = []
         self._ws            = None
 
-        self.do_login()
+        if user_apikey and bearer_token:
+            self.do_reconnect()
+        else:
+            self.do_login()
+
+    def do_reconnect(self):
+        self._headers = {
+            'Authorization' : 'Bearer ' + self._bearer_token,
+            'Content-Type'  : 'application/json;charset=UTF-8'
+        }
+
+        try:
+            # get the websocket host
+            if not self._wshost:
+                self.set_wshost()
+
+            self.update_devices() # to get the devices list
+        except:
+            do_login()
 
     def do_login(self):
         import uuid
@@ -161,6 +180,9 @@ class Sonoff():
         for device in self.get_devices():
             if 'deviceid' in device and device['deviceid'] == deviceid:
                 return device
+
+    def get_api_region(self):
+        return self._api_region
 
     def get_bearer_token(self):
         return self._bearer_token
