@@ -204,7 +204,7 @@ class Sonoff():
 
         return self._ws
         
-    def switch(self, new_state, deviceid, outlet):
+    def switch(self, new_state, deviceid, outlet=None):
         """Switch on or off."""
 
         # we're in the grace period, no state change
