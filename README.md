@@ -27,6 +27,10 @@ Configuration is simple and basically passed to the class when you instantiate i
 
 > **api_region** - The API region you use, valid ones are apparently 'us', 'eu' and 'cn'
 
+> **user_apikey** - The API key of authenticated user, defaults to None
+
+> **bearer_token** - The Bearer token of authenticated user, defaults to None
+
 > **grace_period** - This defaults to 600, I don't know why yet.
 
 ## Usage
@@ -42,6 +46,11 @@ if devices:
     # We found a device, lets turn something on
     device_id = devices[0]['deviceid']
     s.switch('on', device_id, 0)
+
+# update config
+config.api_region = s.get_api_region
+config.user_apikey = s.get_user_apikey
+config.bearer_token = s.get_bearer_token
 ```
 
 ## Support
