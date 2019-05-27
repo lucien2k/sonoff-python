@@ -18,4 +18,8 @@ setup(name='sonoff-python',
         "Operating System :: OS Independent",
       ],
       packages=['sonoff'],
+      install_requires=[
+        'requests>=2.12.4',
+        'websocket-client>=0.54.0'
+       ],
       zip_safe=False)
