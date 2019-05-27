@@ -45,7 +45,7 @@ class Sonoff():
 
             self.update_devices() # to get the devices list
         except:
-            do_login()
+            self.do_login()
 
     def do_login(self):
         import uuid
