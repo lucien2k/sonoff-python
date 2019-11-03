@@ -3,7 +3,7 @@ import logging, time, hmac, hashlib, random, base64, json, socket, requests, re
 from datetime import timedelta
 
 SCAN_INTERVAL = timedelta(seconds=60)
-HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, HTTP_NOT_FOUND = 301,400,404
+HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND = 301,400,401,404
 
 _LOGGER = logging.getLogger(__name__)
 
