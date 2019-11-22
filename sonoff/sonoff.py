@@ -3,8 +3,10 @@ import logging, time, hmac, hashlib, random, base64, json, socket, requests, re
 from datetime import timedelta
 
 SCAN_INTERVAL = timedelta(seconds=60)
+HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND = 301,400,401,404
 
 _LOGGER = logging.getLogger(__name__)
+
 
 def gen_nonce(length=8):
     """Generate pseudorandom number."""
@@ -45,7 +47,7 @@ class Sonoff():
 
             self.update_devices() # to get the devices list
         except:
-            do_login()
+            self.do_login()
 
     def do_login(self):
         import uuid
@@ -226,7 +228,7 @@ class Sonoff():
 
         return self._ws
         
-    def switch(self, new_state, deviceid, outlet):
+    def switch(self, new_state, deviceid, outlet=None):
         """Switch on or off."""
 
         # we're in the grace period, no state change
