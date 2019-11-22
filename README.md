@@ -45,7 +45,7 @@ devices = s.get_devices()
 if devices:
     # We found a device, lets turn something on
     device_id = devices[0]['deviceid']
-    s.switch('on', device_id, 0)
+    s.switch('on', device_id, None)
 
 # update config
 config.api_region = s.get_api_region
