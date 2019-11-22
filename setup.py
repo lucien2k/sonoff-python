@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(name='sonoff-python',
-      version='0.2',
+      version='0.2.1',
       description='Make use of your sonoff smart switches without flashing them via the cloud APIs',
       long_description=long_description,
       long_description_content_type="text/markdown",
