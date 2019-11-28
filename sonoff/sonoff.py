@@ -1,5 +1,5 @@
 # The domain of your component. Should be equal to the name of your component.
-import logging, time, hmac, hashlib, random, base64, json, socket, requests, re
+import logging, time, hmac, hashlib, random, base64, json, socket, requests, re, uuid
 from datetime import timedelta
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -28,6 +28,7 @@ class Sonoff():
         self._bearer_token  = bearer_token
         self._devices       = []
         self._ws            = None
+        self._appid = 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq'
 
         if user_apikey and bearer_token:
             self.do_reconnect()
@@ -50,7 +51,6 @@ class Sonoff():
             self.do_login()
 
     def do_login(self):
-        import uuid
 
         # reset the grace period
         self._skipped_login = 0
@@ -60,7 +60,7 @@ class Sonoff():
             'version'   : '6',
             'ts'        : int(time.time()),
             'nonce'     : gen_nonce(15),
-            'appid'     : 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq',
+            'appid'     : self._appid,
             'imei'      : str(uuid.uuid4()),
             'os'        : 'iOS',
             'model'     : 'iPhone10,6',
@@ -153,8 +153,21 @@ class Sonoff():
             _LOGGER.info("Grace period active")            
             return self._devices
 
-        r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region), 
-            headers=self._headers)
+        query_params = {
+            'lang': 'en',
+            'version': '6',
+            'ts': int(time.time()),
+            'nonce': gen_nonce(15),
+            'appid': self._appid,
+            'imei': str(uuid.uuid4()),
+            'os': 'iOS',
+            'model': 'iPhone10,6',
+            'romVersion': '11.1.2',
+            'appVersion': '3.5.3'
+        }
+        r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region),
+                         params=query_params,
+                         headers=self._headers)
 
         resp = r.json()
         if 'error' in resp and resp['error'] in [HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED]:
@@ -169,7 +182,7 @@ class Sonoff():
             _LOGGER.info("Re-login component")
             self.do_login()
 
-        self._devices = r.json()
+        self._devices = resp.get('devicelist', [])
         return self._devices
 
     def get_devices(self, force_update = False):
