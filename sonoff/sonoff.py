@@ -28,7 +28,14 @@ class Sonoff():
         self._bearer_token  = bearer_token
         self._devices       = []
         self._ws            = None
+
+        # app details
+        self._app_version = '3.5.3'
         self._appid = 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq'
+        self._model = 'iPhone10,6'
+        self._os = 'iOS'
+        self._rom_version = '11.1.2'
+        self._version = '6'
 
         if user_apikey and bearer_token:
             self.do_reconnect()
@@ -57,15 +64,15 @@ class Sonoff():
         
         app_details = {
             'password'  : self._password,
-            'version'   : '6',
+            'version'   : self._version,
             'ts'        : int(time.time()),
             'nonce'     : gen_nonce(15),
             'appid'     : self._appid,
             'imei'      : str(uuid.uuid4()),
-            'os'        : 'iOS',
-            'model'     : 'iPhone10,6',
-            'romVersion': '11.1.2',
-            'appVersion': '3.5.3'
+            'os'        : self._os,
+            'model'     : self._model,
+            'romVersion': self._rom_version,
+            'appVersion': self._app_version
         }
 
         if re.match(r'[^@]+@[^@]+\.[^@]+', self._username):
@@ -155,15 +162,15 @@ class Sonoff():
 
         query_params = {
             'lang': 'en',
-            'version': '6',
+            'version': self._version,
             'ts': int(time.time()),
             'nonce': gen_nonce(15),
             'appid': self._appid,
             'imei': str(uuid.uuid4()),
-            'os': 'iOS',
-            'model': 'iPhone10,6',
-            'romVersion': '11.1.2',
-            'appVersion': '3.5.3'
+            'os': self._os,
+            'model': self._model,
+            'romVersion': self._rom_version,
+            'appVersion': self._app_version
         }
         r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region),
                          params=query_params,
