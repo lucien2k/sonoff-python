@@ -1,5 +1,5 @@
 # The domain of your component. Should be equal to the name of your component.
-import logging, time, hmac, hashlib, random, base64, json, socket, requests, re, uuid
+import logging, time, hmac, hashlib, random, base64, json, socket, requests, re
 from datetime import timedelta
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -29,14 +29,6 @@ class Sonoff():
         self._devices       = []
         self._ws            = None
 
-        # app details
-        self._app_version = '3.5.3'
-        self._appid = 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq'
-        self._model = 'iPhone10,6'
-        self._os = 'iOS'
-        self._rom_version = '11.1.2'
-        self._version = '6'
-
         if user_apikey and bearer_token:
             self.do_reconnect()
         else:
@@ -58,21 +50,22 @@ class Sonoff():
             self.do_login()
 
     def do_login(self):
+        import uuid
 
         # reset the grace period
         self._skipped_login = 0
         
         app_details = {
             'password'  : self._password,
-            'version'   : self._version,
+            'version'   : '6',
             'ts'        : int(time.time()),
             'nonce'     : gen_nonce(15),
-            'appid'     : self._appid,
+            'appid'     : 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq',
             'imei'      : str(uuid.uuid4()),
-            'os'        : self._os,
-            'model'     : self._model,
-            'romVersion': self._rom_version,
-            'appVersion': self._app_version
+            'os'        : 'iOS',
+            'model'     : 'iPhone10,6',
+            'romVersion': '11.1.2',
+            'appVersion': '3.5.3'
         }
 
         if re.match(r'[^@]+@[^@]+\.[^@]+', self._username):
@@ -160,21 +153,10 @@ class Sonoff():
             _LOGGER.info("Grace period active")            
             return self._devices
 
-        query_params = {
-            'lang': 'en',
-            'version': self._version,
-            'ts': int(time.time()),
-            'nonce': gen_nonce(15),
-            'appid': self._appid,
-            'imei': str(uuid.uuid4()),
-            'os': self._os,
-            'model': self._model,
-            'romVersion': self._rom_version,
-            'appVersion': self._app_version
-        }
-        r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region),
-                         params=query_params,
-                         headers=self._headers)
+
+        r = requests.get(
+            'https://{}-api.coolkit.cc:8080/api/user/device?lang=en&apiKey={}&getTags=1&appid=oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq'.format(
+                self._api_region, self._user_apikey), headers=self._headers)
 
         resp = r.json()
         if 'error' in resp and resp['error'] in [HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED]:
@@ -189,7 +171,7 @@ class Sonoff():
             _LOGGER.info("Re-login component")
             self.do_login()
 
-        self._devices = resp.get('devicelist', [])
+        self._devices = r.json()
         return self._devices
 
     def get_devices(self, force_update = False):
