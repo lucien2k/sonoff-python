@@ -1,5 +1,5 @@
 # The domain of your component. Should be equal to the name of your component.
-import logging, time, hmac, hashlib, random, base64, json, socket, requests, re, uuid
+import logging, time, hmac, hashlib, base64, json, socket, requests, re
 from datetime import timedelta
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -7,10 +7,6 @@ HTTP_MOVED_PERMANENTLY, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND = 30
 
 _LOGGER = logging.getLogger(__name__)
 
-
-def gen_nonce(length=8):
-    """Generate pseudorandom number."""
-    return ''.join([str(random.randint(0, 9)) for i in range(length)])
 
 class Sonoff():
     # def __init__(self, hass, email, password, api_region, grace_period):
@@ -30,11 +26,7 @@ class Sonoff():
         self._ws            = None
 
         # app details
-        self._app_version = '3.5.3'
         self._appid = 'oeVkj2lYFGnJu5XUtWisfW4utiN4u9Mq'
-        self._model = 'iPhone10,6'
-        self._os = 'iOS'
-        self._rom_version = '11.1.2'
         self._version = '6'
 
         if user_apikey and bearer_token:
@@ -64,15 +56,8 @@ class Sonoff():
         
         app_details = {
             'password'  : self._password,
-            'version'   : self._version,
             'ts'        : int(time.time()),
-            'nonce'     : gen_nonce(15),
             'appid'     : self._appid,
-            'imei'      : str(uuid.uuid4()),
-            'os'        : self._os,
-            'model'     : self._model,
-            'romVersion': self._rom_version,
-            'appVersion': self._app_version
         }
 
         if re.match(r'[^@]+@[^@]+\.[^@]+', self._username):
@@ -163,14 +148,7 @@ class Sonoff():
         query_params = {
             'lang': 'en',
             'version': self._version,
-            'ts': int(time.time()),
-            'nonce': gen_nonce(15),
             'appid': self._appid,
-            'imei': str(uuid.uuid4()),
-            'os': self._os,
-            'model': self._model,
-            'romVersion': self._rom_version,
-            'appVersion': self._app_version
         }
         r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region),
                          params=query_params,
@@ -226,16 +204,8 @@ class Sonoff():
                 payload = {
                     'action'    : "userOnline",
                     'userAgent' : 'app',
-                    'version'   : 6,
-                    'nonce'     : gen_nonce(15),
-                    'apkVesrion': "1.8",
-                    'os'        : 'ios',
                     'at'        : self.get_bearer_token(),
                     'apikey'    : self.get_user_apikey(),
-                    'ts'        : str(int(time.time())),
-                    'model'     : 'iPhone10,6',
-                    'romVersion': '11.1.2',
-                    'sequence'  : str(time.time()).replace('.','')
                 }
 
                 self._ws.send(json.dumps(payload))
@@ -301,7 +271,6 @@ class Sonoff():
             'deviceid'      : str(deviceid),
             'sequence'      : str(time.time()).replace('.',''),
             'controlType'   : device['params']['controlType'] if 'controlType' in device['params'] else 4,
-            'ts'            : 0
         }
 
         # this key is needed for a shared device
