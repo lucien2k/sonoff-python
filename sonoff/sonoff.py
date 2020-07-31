@@ -36,6 +36,7 @@ class Sonoff():
         self._os = 'iOS'
         self._rom_version = '11.1.2'
         self._version = '6'
+        self._imei = str(uuid.uuid4())
 
         if user_apikey and bearer_token:
             self.do_reconnect()
@@ -68,7 +69,7 @@ class Sonoff():
             'ts'        : int(time.time()),
             'nonce'     : gen_nonce(15),
             'appid'     : self._appid,
-            'imei'      : str(uuid.uuid4()),
+            'imei'      : self._imei,
             'os'        : self._os,
             'model'     : self._model,
             'romVersion': self._rom_version,
@@ -162,16 +163,19 @@ class Sonoff():
 
         query_params = {
             'lang': 'en',
+            'apiKey': self.get_user_apikey(),
+            'getTags': 1,
             'version': self._version,
             'ts': int(time.time()),
             'nonce': gen_nonce(15),
             'appid': self._appid,
-            'imei': str(uuid.uuid4()),
+            'imei': self._imei,
             'os': self._os,
             'model': self._model,
             'romVersion': self._rom_version,
             'appVersion': self._app_version
         }
+
         r = requests.get('https://{}-api.coolkit.cc:8080/api/user/device'.format(self._api_region),
                          params=query_params,
                          headers=self._headers)
