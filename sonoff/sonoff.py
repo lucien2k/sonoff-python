@@ -1,5 +1,6 @@
 # The domain of your component. Should be equal to the name of your component.
-import logging, time, hmac, hashlib, random, base64, json, socket, requests, re, uuid
+import logging, time, hmac, hashlib, random, base64, socket, requests, re, uuid
+from json import dumps, loads
 from datetime import timedelta
 from websocket import create_connection
 
@@ -93,7 +94,7 @@ class Sonoff():
 
         hex_dig = hmac.new(
             decryptedAppSecret,
-            str.encode(json.dumps(app_details)),
+            str.encode(dumps(app_details)),
             digestmod=hashlib.sha256).digest()
 
         sign = base64.b64encode(hex_dig).decode()
@@ -270,12 +271,12 @@ class Sonoff():
                     'sequence'  : str(time.time()).replace('.', '')[:13]
                 }
 
-                self._ws.send(json.dumps(payload))
-                wsresp = self._ws.recv()
+                self._ws.send(dumps(payload))
+                wsresp = loads(self._ws.recv())
                 try:
                     if wsresp['error'] != 0:
                         _LOGGER.error(f'open socket {wsresp}')
-                except:
+                except KeyError:
                     pass
 
             except (socket.timeout, ConnectionRefusedError, ConnectionResetError):
@@ -343,24 +344,26 @@ class Sonoff():
         if device['apikey'] != self.get_user_apikey():
             payload['selfApikey'] = self.get_user_apikey()
 
-        self._ws.send(json.dumps(payload))
-        wsresp = self._ws.recv()
-        # _LOGGER.debug("switch socket: %s", wsresp)
-
-        self._ws.close() # no need to keep websocket open (for now)
-        self._ws = None
-
-        # set also te pseudo-internal state of the device until the real refresh kicks in
-        for idx, device in enumerate(self._devices):
-            if device['deviceid'] == deviceid:
-                if outlet is not None:
-                    self._devices[idx]['params']['switches'][outlet]['switch'] = new_state
-                else:
-                    self._devices[idx]['params']['switch'] = new_state
+        self._ws.send(dumps(payload))
+        try:
+            wsresp = loads(self._ws.recv())
+            if wsresp['error'] != 0:
+                _LOGGER.error(f'open socket {wsresp}')
+            else:
+                for idx, device in enumerate(self._devices):
+                    if device['deviceid'] == deviceid:
+                        if outlet is not None:
+                            self._devices[idx]['params']['switches'][outlet]['switch'] = new_state
+                        else:
+                            self._devices[idx]['params']['switch'] = new_state
 
 
-        # @TODO add some sort of validation here, maybe call the devices status 
-        # only IF MAIN STATUS is done over websocket exclusively
+            # @TODO add some sort of validation here, maybe call the devices status
+            # only IF MAIN STATUS is done over websocket exclusively
+        finally:
+            self._ws.close() # no need to keep websocket open (for now)
+            self._ws = None
+
 
         return new_state
 
